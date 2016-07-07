@@ -26,7 +26,7 @@ func CreateConn() error {
 	clientCertPath := "/data/tmp/cert/test/client.crt"
 	clientKeyPath :=  "/data/tmp/cert/test/client.key"
 
-	endpoints := []string{"https://10.14.91.12:2379","https://10.14.91.13:2379",}
+	endpoints := []string{"https://10.14.86.144:2379","https://10.14.86.147:2379",}
 
 	c, err := NewETCDConnWithCertPath(caCertPath, clientCertPath, clientKeyPath, endpoints)
 	if err != nil {

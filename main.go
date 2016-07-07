@@ -1,48 +1,33 @@
 package main
 import (
-	"strconv"
 	"log"
-	"time"
-
-	"github.com/coreos/etcd/client"
-	"golang.org/x/net/context"
 
 	"etcd-demo/etcd"
+	"etcd-demo/etcd3"
+	"time"
 )
 
-var auth = etcd.Auth{UserName: "root", Password: "123456"}
-var key = "/demo/a"
+var auth = etcd.Auth{UserName: "web", Password: "warden@web"}
+var auth3 = &etcd3.Auth3{UserName: "web", Password: "warden@web"}
+
+var key = "/warden/key"
 
 func main() {
-	etcd.CreateConn()
-	keyAPI, err := etcd.Get().API(auth);
-	if err != nil {
-		log.Println("get key api error: ", err)
-		return
+	v3()
+
+	time.Sleep(3*time.Second)
+}
+
+func v2() {
+	if err := etcd.CreateConn() ; err != nil {
+		log.Fatal(err)
 	}
+	etcd.Demo(key, auth)
+}
 
-	for i:=0;i < 1000; i++ {
-		value := strconv.Itoa(i)
-
-		log.Println("=> atomic set value: ", value)
-		_, err = keyAPI.Set(context.Background(),key, value, &client.SetOptions{PrevExist: client.PrevNoExist})
-		if err != nil {
-			log.Println("set key error: ", err)
-			return
-		}
-
-		time.Sleep(time.Second)
-
-		log.Println("<= delete value: ", value)
-		_, err = keyAPI.Delete(context.Background(), key, nil)
-		if err != nil {
-			log.Println("delete key error: ", err)
-			return
-		}
-
-		time.Sleep(time.Second)
-
-		log.Println("finish ", value)
+func v3() {
+	if err := etcd3.CreateConn() ; err != nil {
+		log.Fatal(err)
 	}
-
+	etcd3.Demo(key, auth3)
 }
